@@ -63,14 +63,12 @@ impl Application for ScheduleManager {
     }
 
     fn view(&self) -> iced::Element<Self::Message> {
-        let date_picker_date = self.date_picker_state.date.to_string();
-        let date_picker_button =
-            Button::new(Text::new(date_picker_date)).on_press(Message::ChooseDate);
+        let date_picker_date = self.date_picker_state.date;
 
         DatePicker::new(
             self.date_picker_state.show,
-            self.date_picker_state.date,
-            date_picker_button,
+            date_picker_date,
+            Button::new(Text::new(date_picker_date.to_string())).on_press(Message::ChooseDate),
             Message::CancelDate,
             Message::SubmitDate,
         )
