@@ -3,7 +3,7 @@ use iced::{
     widget::{Button, Text},
     Application, Command, Settings, Theme,
 };
-use iced_aw::{date_picker::Date, helpers::date_picker};
+use iced_aw::{date_picker::Date, DatePicker};
 
 fn main() -> iced::Result {
     ScheduleManager::run(Settings::default())
@@ -67,7 +67,7 @@ impl Application for ScheduleManager {
         let date_picker_button =
             Button::new(Text::new(date_picker_date)).on_press(Message::ChooseDate);
 
-        date_picker(
+        DatePicker::new(
             self.date_picker_state.show,
             self.date_picker_state.date,
             date_picker_button,
