@@ -1,7 +1,7 @@
 use iced::{
     font,
-    widget::{Button, Container, Row, Text},
-    Alignment, Application, Command, Length, Settings, Theme,
+    widget::{Button, Text},
+    Application, Command, Settings, Theme,
 };
 use iced_aw::{date_picker::Date, helpers::date_picker};
 
@@ -56,7 +56,7 @@ impl Application for ScheduleManager {
                 self.date_picker_state.show = false;
             }
             Message::CancelDate => self.date_picker_state.show = false,
-            _ => {}
+            Message::DatePickerFontLoaded(_) => {}
         }
 
         Command::none()
@@ -64,27 +64,16 @@ impl Application for ScheduleManager {
 
     fn view(&self) -> iced::Element<Self::Message> {
         let date_picker_date = self.date_picker_state.date.to_string();
-        let date_picker_button = Button::new(Text::new(date_picker_date))
-            .on_press(Message::ChooseDate);
+        let date_picker_button =
+            Button::new(Text::new(date_picker_date)).on_press(Message::ChooseDate);
 
-        let datepicker = date_picker(
+        date_picker(
             self.date_picker_state.show,
             self.date_picker_state.date,
             date_picker_button,
             Message::CancelDate,
             Message::SubmitDate,
-        );
-
-        let row = Row::new()
-            .align_items(Alignment::Center)
-            .spacing(10)
-            .push(datepicker);
-
-        Container::new(row)
-            .center_x()
-            .center_y()
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .into()
+        )
+        .into()
     }
 }
