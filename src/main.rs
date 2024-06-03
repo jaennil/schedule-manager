@@ -1,6 +1,6 @@
 use iced::{
     font,
-    widget::{Button, Text},
+    widget::{button, text},
     Application, Command, Settings, Theme,
 };
 use iced_aw::{date_picker::Date, DatePicker};
@@ -68,7 +68,7 @@ impl Application for ScheduleManager {
         DatePicker::new(
             self.date_picker_state.show,
             date_picker_date,
-            Button::new(Text::new(date_picker_date.to_string())).on_press(Message::ChooseDate),
+            button(text(date_picker_date.to_string())).on_press(Message::ChooseDate),
             Message::CancelDate,
             Message::SubmitDate,
         )
