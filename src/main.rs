@@ -1,13 +1,21 @@
-use iced::{font, Application, Command, Settings, Theme, widget::{Button, Text, Row, Container}, Alignment, Length};
+use iced::{
+    font,
+    widget::{Button, Container, Row, Text},
+    Alignment, Application, Command, Length, Settings, Theme,
+};
 use iced_aw::{date_picker::Date, helpers::date_picker};
 
 fn main() -> iced::Result {
     ScheduleManager::run(Settings::default())
 }
 
-struct ScheduleManager {
+struct DatePickerState {
     date: Date,
-    show_date_picker: bool,
+    show: bool,
+}
+
+struct ScheduleManager {
+    date_picker_state: DatePickerState,
 }
 
 #[derive(Clone, Debug)]
@@ -25,9 +33,13 @@ impl Application for ScheduleManager {
     type Flags = ();
 
     fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        let schedule_manager = Self {date: Date::today(), show_date_picker: false};
         (
-            schedule_manager,
+            Self {
+                date_picker_state: DatePickerState {
+                    date: Date::today(),
+                    show: false,
+                },
+            },
             font::load(iced_aw::BOOTSTRAP_FONT_BYTES).map(Message::DatePickerFontLoaded),
         )
     }
@@ -38,12 +50,12 @@ impl Application for ScheduleManager {
 
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
-            Message::ChooseDate => self.show_date_picker = true,
+            Message::ChooseDate => self.date_picker_state.show = true,
             Message::SubmitDate(date) => {
-                self.date = date;
-                self.show_date_picker = false;
-            },
-            Message::CancelDate => self.show_date_picker = false,
+                self.date_picker_state.date = date;
+                self.date_picker_state.show = false;
+            }
+            Message::CancelDate => self.date_picker_state.show = false,
             _ => {}
         }
 
@@ -51,12 +63,14 @@ impl Application for ScheduleManager {
     }
 
     fn view(&self) -> iced::Element<Self::Message> {
-        let but = Button::new(Text::new("Set Date")).on_press(Message::ChooseDate);
+        let date_picker_date = self.date_picker_state.date.to_string();
+        let date_picker_button = Button::new(Text::new(date_picker_date))
+            .on_press(Message::ChooseDate);
 
         let datepicker = date_picker(
-            self.show_date_picker,
-            self.date,
-            but,
+            self.date_picker_state.show,
+            self.date_picker_state.date,
+            date_picker_button,
             Message::CancelDate,
             Message::SubmitDate,
         );
@@ -64,8 +78,7 @@ impl Application for ScheduleManager {
         let row = Row::new()
             .align_items(Alignment::Center)
             .spacing(10)
-            .push(datepicker)
-            .push(Text::new(format!("Date: {}", self.date)));
+            .push(datepicker);
 
         Container::new(row)
             .center_x()
