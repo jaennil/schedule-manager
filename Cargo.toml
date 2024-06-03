@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 iced = "0.12.1"
+iced_aw = {version="0.9.3", default-features=false, features=["date_picker"]}
