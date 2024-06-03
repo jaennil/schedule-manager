@@ -1,23 +1,31 @@
-use iced::{Sandbox, Settings};
+use iced::{executor, Application, Command, Settings, Theme};
 
 fn main() -> iced::Result {
-    MyApp::run(Settings::default())
+    ScheduleManager::run(Settings::default())
 }
 
-struct MyApp;
+struct ScheduleManager;
 
-impl Sandbox for MyApp {
-    type Message = ();
+#[derive(Debug)]
+enum Message {}
 
-    fn new() -> Self {
-        Self
+impl Application for ScheduleManager {
+    type Message = Message;
+    type Executor = executor::Default;
+    type Theme = Theme;
+    type Flags = ();
+
+    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
+        (Self, Command::none())
     }
 
     fn title(&self) -> String {
-        String::from("My App")
+        String::from("schedule manager")
     }
 
-    fn update(&mut self, _message: Self::Message) {}
+    fn update(&mut self, _message: Message) -> Command<Message> {
+        Command::none()
+    }
 
     fn view(&self) -> iced::Element<Self::Message> {
         "Hello World!".into()
