@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-iced = "0.12.1"
-iced_aw = {version="0.9.3", default-features=false, features=["date_picker"]}
+eframe = "0.27.2"
+egui_extras = { version = "0.27.2", features = ["datepicker"] }
+chrono = { version = "0.4.38" }

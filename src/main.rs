@@ -1,77 +1,35 @@
-use iced::{
-    font,
-    widget::{button, text},
-    Application, Command, Settings, Theme,
-};
-use iced_aw::{date_picker::Date, DatePicker};
+use eframe::egui;
 
-fn main() -> iced::Result {
-    ScheduleManager::run(Settings::default())
+fn main() {
+    let native_options = eframe::NativeOptions::default();
+    eframe::run_native(
+        "Schedule Manager",
+        native_options,
+        Box::new(|cc| Box::new(ScheduleManager::new(cc))),
+    ).unwrap();
 }
 
-struct DatePickerState {
-    date: Date,
-    show: bool,
-}
-
+#[derive(Default)]
 struct ScheduleManager {
-    date_picker_state: DatePickerState,
+    start_date: chrono::NaiveDate,
+    end_date: chrono::NaiveDate,
 }
 
-#[derive(Clone, Debug)]
-enum Message {
-    DatePickerFontLoaded(Result<(), font::Error>),
-    ChooseDate,
-    CancelDate,
-    SubmitDate(Date),
-}
-
-impl Application for ScheduleManager {
-    type Message = Message;
-    type Executor = iced::executor::Default;
-    type Theme = Theme;
-    type Flags = ();
-
-    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        (
-            Self {
-                date_picker_state: DatePickerState {
-                    date: Date::today(),
-                    show: false,
-                },
-            },
-            font::load(iced_aw::BOOTSTRAP_FONT_BYTES).map(Message::DatePickerFontLoaded),
-        )
-    }
-
-    fn title(&self) -> String {
-        String::from("schedule manager")
-    }
-
-    fn update(&mut self, message: Message) -> Command<Message> {
-        match message {
-            Message::ChooseDate => self.date_picker_state.show = true,
-            Message::SubmitDate(date) => {
-                self.date_picker_state.date = date;
-                self.date_picker_state.show = false;
-            }
-            Message::CancelDate => self.date_picker_state.show = false,
-            Message::DatePickerFontLoaded(_) => {}
+impl ScheduleManager {
+    fn new(_cc: &eframe::CreationContext<'_>) -> Self {
+        Self {
+            start_date: chrono::offset::Utc::now().date_naive(),
+            end_date: chrono::offset::Utc::now().date_naive(),
         }
-
-        Command::none()
     }
+}
 
-    fn view(&self) -> iced::Element<Self::Message> {
-        let date_picker_date = self.date_picker_state.date;
-
-        DatePicker::new(
-            self.date_picker_state.show,
-            date_picker_date,
-            button(text(date_picker_date.to_string())).on_press(Message::ChooseDate),
-            Message::CancelDate,
-            Message::SubmitDate,
-        )
-        .into()
+impl eframe::App for ScheduleManager {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("Hello World!");
+            ui.add(egui_extras::DatePickerButton::new(&mut self.start_date));
+            ui.end_row();
+        });
     }
 }
